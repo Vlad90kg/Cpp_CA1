@@ -6,7 +6,7 @@
 
 #include "../headers/DataModel.h"
 
-
+void display(vector<Stock> &stocks);
 
 void loadCSVData(const string &filename, vector<Stock> &stocks) {
     ifstream fin(filename);
@@ -54,7 +54,7 @@ void loadCSVData(const string &filename, vector<Stock> &stocks) {
 int returnElementIndex(const vector<Stock> &stocks, const string &company_name) {
     int index = 0;
 
-    for (auto stock : stocks) {
+    for (const auto& stock : stocks) {
         if (stock.company_name == company_name) {
             return index;
         }
@@ -67,7 +67,7 @@ unordered_map<string, int> stockVolumeStatistics(const vector<Stock> &stocks) {
     unordered_map<string, int> statistics;
     string stockVolumeUnder100k;
 
-    for (auto stock : stocks) {
+    for (const auto& stock : stocks) {
         if (stock.volume_traded < 100000) {
             if (statistics.contains("Stocks with volume traded below 100k")) {
                 statistics["Stocks with volume traded below 100k"] += 1;
@@ -98,6 +98,20 @@ unordered_map<string, int> stockVolumeStatistics(const vector<Stock> &stocks) {
     return statistics;
 }
 
+void displaySubset(const vector<Stock> &stocks, const double &desired_price) {
+    bool found = false;
+    vector<Stock> subset;
+    for (const auto& stock : stocks) {
+        if (stock.price <= desired_price) {
+            found = true;
+            subset.push_back(stock);
+        }
+    }
+    if (found) {
+        cout << "Stocks with price equal to desired or less are below:" << endl;
+        display(subset);
+    }
+}
 void display(vector<Stock> &stocks) {
 
     cout << left << setw(15) << "Stock Symbol |"
@@ -105,7 +119,7 @@ void display(vector<Stock> &stocks) {
          << right << setw(13) << "Stock price | "
          << right << setw(15) << "Dividend yield |"
          << right << setw(15) << "Volume traded" << endl;
-    for (Stock stock : stocks) {
+    for (const Stock& stock : stocks) {
          cout << left << setw(15) << stock.stock_symbol
          << left << setw(15) << stock.company_name
          << right << setw(11) << stock.price
@@ -124,6 +138,11 @@ void general() {
     for (auto it = statistics.begin(); it != statistics.end(); ++it) {
         cout << it->first << " | " << it->second << endl;
     }
+
+    cout << "Enter the price: " << endl;
+    double price;
+    cin >> price;
+    displaySubset(stocks, price);
 
 }
 int main() {
