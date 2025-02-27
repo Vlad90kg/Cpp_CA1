@@ -15,7 +15,17 @@ struct Stock {
     int volume_traded;
 };
 
+struct minMaxAvg {
+    Stock min;
+    Stock max;
+    int average = 0;
+};
+
 void loadCSVData(vector<Stock> &stocks);
+void displaySubset(const vector<Stock> &stocks, const double &desired_price);
+void displayStock(const Stock &stock);
+void displayTitle();
+void display(vector<Stock> &stocks);
 
 
 #endif //DATAMODEL_H

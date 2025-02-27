@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
+#include <limits>
 #include <sstream>
 #include <unordered_map>
 
@@ -112,38 +113,81 @@ void displaySubset(const vector<Stock> &stocks, const double &desired_price) {
         display(subset);
     }
 }
-void display(vector<Stock> &stocks) {
 
+void displayStock(const Stock &stock) {
+    cout << left << setw(15) << stock.stock_symbol
+         << left << setw(15) << stock.company_name
+         << right << setw(11) << stock.price
+         << right << setw(17) << stock.dividend_yield
+         << right << setw(17) << stock.volume_traded << endl;
+
+}
+
+void displayTitle() {
     cout << left << setw(15) << "Stock Symbol |"
          << left << setw(15) << "Company Name |"
          << right << setw(13) << "Stock price | "
          << right << setw(15) << "Dividend yield |"
          << right << setw(15) << "Volume traded" << endl;
+}
+void display(vector<Stock> &stocks) {
+    displayTitle();
     for (const Stock& stock : stocks) {
-         cout << left << setw(15) << stock.stock_symbol
-         << left << setw(15) << stock.company_name
-         << right << setw(11) << stock.price
-         << right << setw(17) << stock.dividend_yield
-         << right << setw(17) << stock.volume_traded << endl;
+        displayStock(stock);
     }
+}
+
+
+minMaxAvg minMaxAverage(const vector<Stock> &stocks) {
+    int min = numeric_limits<int>::max(), max = numeric_limits<int>::min(),  avg = 0;
+    Stock minStock, maxStock;
+    for (const Stock& stock : stocks) {
+        if (stock.volume_traded < min) {
+            min = stock.volume_traded;
+        } else if (stock.volume_traded > max) {
+            max = stock.volume_traded;
+        }
+        avg += stock.volume_traded;
+    }
+
+    for (const Stock& stock : stocks) {
+        if (stock.volume_traded == min) {
+            minStock = stock;
+        }else if (stock.volume_traded == max) {
+            maxStock = stock;
+        }
+    }
+    avg /= static_cast<int>(stocks.size());
+    minMaxAvg min_max_avg = {minStock, maxStock,avg};
+    return  min_max_avg;
+};
+
+void displayMinMaxAvg(const minMaxAvg &min_max_avg) {
+    displayTitle();
+    cout << "The least traded stock:" << endl;
+    displayStock(min_max_avg.min);
+    cout << "The most traded stock:" << endl;
+    displayStock(min_max_avg.max);
+    cout << "Average: " << min_max_avg.average << endl;
 }
 
 void general() {
     vector<Stock> stocks;
     loadCSVData("../stock_market_data.csv", stocks);
     display(stocks);
-    int companyNameIndex = returnElementIndex(stocks, "Katz");
+    const int companyNameIndex = returnElementIndex(stocks, "Katz");
     cout << "Company Name: " << companyNameIndex << endl;
     unordered_map<string, int> statistics = stockVolumeStatistics(stocks);
-    for (auto it = statistics.begin(); it != statistics.end(); ++it) {
-        cout << it->first << " | " << it->second << endl;
+    for (auto &[first, second] : statistics) {
+        cout << first << " | " << second << endl;
     }
 
     cout << "Enter the price: " << endl;
     double price;
     cin >> price;
     displaySubset(stocks, price);
-
+    minMaxAvg min_max_avg = minMaxAverage(stocks);
+    displayMinMaxAvg(min_max_avg);
 }
 int main() {
     general();
