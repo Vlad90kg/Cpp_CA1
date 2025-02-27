@@ -281,36 +281,6 @@ void general() {
     }while (!exit);
 
 
-    // display(stocks);
-    // const int companyNameIndex = returnElementIndex(stocks, "Katz");
-    // cout << "Company Name: " << companyNameIndex << endl;
-    // unordered_map<string, int> statistics = stockVolumeStatistics(stocks);
-    // for (auto &[first, second] : statistics) {
-    //     cout << first << " | " << second << endl;
-    // }
-    //
-    // cout << "Enter the price: " << endl;
-    // double price;
-    // cin >> price;
-    // displaySubset(stocks, price);
-    // minMaxAvg min_max_avg = minMaxAverage(stocks);
-    // displayMinMaxAvg(min_max_avg);
-    //
-    // cout << "Input capital letters next line to find the stocks with matching stock symbols: " << endl;
-    // string stock_symbol_input;
-    // cin >> stock_symbol_input;
-    // list<Stock> matching_stocks = returnMatchingStocks(stocks, stock_symbol_input);
-    // displayTitle();
-    // if (!matching_stocks.empty()) {
-    //     for (Stock& stock : matching_stocks) {
-    //         displayStock(stock);
-    //     }
-    // } else {
-    //     cout << "No matching stocks found" << endl;
-    // }
-    //
-    // displayInDescOrder(stocks);
-
 }
 int main() {
     general();
