@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iomanip>
 #include <sstream>
+#include <unordered_map>
 
 #include "../headers/DataModel.h"
 
@@ -50,7 +51,7 @@ void loadCSVData(const string &filename, vector<Stock> &stocks) {
     }
     fin.close();
 }
-int returnElementIndex(vector<Stock> &stocks, const string &company_name) {
+int returnElementIndex(const vector<Stock> &stocks, const string &company_name) {
     int index = 0;
 
     for (auto stock : stocks) {
@@ -61,6 +62,42 @@ int returnElementIndex(vector<Stock> &stocks, const string &company_name) {
     }
     return -1;
 }
+
+unordered_map<string, int> stockVolumeStatistics(const vector<Stock> &stocks) {
+    unordered_map<string, int> statistics;
+    string stockVolumeUnder100k;
+
+    for (auto stock : stocks) {
+        if (stock.volume_traded < 100000) {
+            if (statistics.contains("Stocks with volume traded below 100k")) {
+                statistics["Stocks with volume traded below 100k"] += 1;
+            }else {
+                statistics.insert({"Stocks with volume traded below 100k", 1});
+            }
+
+        } else if (stock.volume_traded < 500000 && stock.volume_traded >= 100000) {
+            if (statistics.contains("Stocks with volume traded between 100k and 500k")) {
+                statistics["Stocks with volume traded between 100k and 500k"] += 1;
+            } else {
+                statistics.insert({"Stocks with volume traded between 100k and 500k", 1});
+            }
+        } else if (stock.volume_traded >= 500000 && stock.volume_traded < 1000000) {
+            if (statistics.contains("Stocks with volume traded between 100k and 500k")) {
+                statistics["Stocks with volume traded between 500k and 1kk"] += 1;
+            } else {
+                statistics.insert({"Stocks with volume traded between 500k and 1kk", 1});
+            }
+        } else if (stock.volume_traded >= 1000000) {
+            if (statistics.contains("Stocks with volume traded over million")) {
+                statistics["Stocks with volume traded over million"] += 1;
+            } else {
+                statistics.insert({"Stocks with volume traded over million", 1});
+            }
+        }
+    }
+    return statistics;
+}
+
 void display(vector<Stock> &stocks) {
 
     cout << left << setw(15) << "Stock Symbol |"
@@ -83,7 +120,10 @@ void general() {
     display(stocks);
     int companyNameIndex = returnElementIndex(stocks, "Katz");
     cout << "Company Name: " << companyNameIndex << endl;
-
+    unordered_map<string, int> statistics = stockVolumeStatistics(stocks);
+    for (auto it = statistics.begin(); it != statistics.end(); ++it) {
+        cout << it->first << " | " << it->second << endl;
+    }
 
 }
 int main() {
