@@ -187,35 +187,129 @@ void displayInDescOrder(vector<Stock> stocks) {
 void general() {
     vector<Stock> stocks;
     loadCSVData("../stock_market_data.csv", stocks);
-    display(stocks);
-    const int companyNameIndex = returnElementIndex(stocks, "Katz");
-    cout << "Company Name: " << companyNameIndex << endl;
-    unordered_map<string, int> statistics = stockVolumeStatistics(stocks);
-    for (auto &[first, second] : statistics) {
-        cout << first << " | " << second << endl;
-    }
+    bool exit = false;
+    bool toMenu = false;
+    char option;
+    cout <<"Stock Market Data Application Menu" << endl;
+    do {
+        cout << "1. Display All Stocks" << endl;
+        cout << "2. Search by Company Name" << endl;
+        cout << "3. Stock Volume Statistics" << endl;
+        cout << "4. Filter Stocks by Price" << endl;
+        cout << "5. Min, Max, & Average Volume" << endl;
+        cout << "6. Find Stocks by Stock Symbol" << endl;
+        cout << "7. Display Stocks Sorted Descending by Price" << endl;
+        cout << "8. Exit" << endl;
+        cin >> option;
+        switch ( option) {
 
-    cout << "Enter the price: " << endl;
-    double price;
-    cin >> price;
-    displaySubset(stocks, price);
-    minMaxAvg min_max_avg = minMaxAverage(stocks);
-    displayMinMaxAvg(min_max_avg);
+            case '1':
+                display(stocks);
 
-    cout << "Input capital letters next line to find the stocks with matching stock symbols: " << endl;
-    string stock_symbol_input;
-    cin >> stock_symbol_input;
-    list<Stock> matching_stocks = returnMatchingStocks(stocks, stock_symbol_input);
-    displayTitle();
-    if (!matching_stocks.empty()) {
-        for (Stock& stock : matching_stocks) {
-            displayStock(stock);
+                do {
+                    cout << "1. Back to main menu." << endl;
+                    cout << "2. Exit." << endl;
+                    cin >> option;
+                    switch (option) {
+                        case '1':
+                            toMenu = true;
+                            break;
+                        case '2':
+                            exit = true;
+                            break;
+                        default:
+                            cout << "Invalid option" << endl;
+                    }
+                } while (!exit && !toMenu);
+
+                break;
+            case '2': {
+                string company;
+                cout << "Enter Company Name: ";
+                // Clear the newline from previous input
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                getline(cin, company);
+                int index = returnElementIndex(stocks, company);
+                if (index != -1)
+                    cout << "Company found at index: " << index << endl;
+                else
+                    cout << "Company not found." << endl;
+                break;
+            }
+            case '3': {
+                unordered_map<string, int> stats = stockVolumeStatistics(stocks);
+                for (const auto &entry : stats) {
+                    cout << entry.first << " | " << entry.second << endl;
+                }
+                break;
+            }
+            case '4': {
+                double price;
+                cout << "Enter maximum desired price: ";
+                cin >> price;
+                displaySubset(stocks, price);
+                break;
+            }
+            case '5': {
+                minMaxAvg result = minMaxAverage(stocks);
+                displayMinMaxAvg(result);
+                break;
+            }
+            case '6': {
+                string symbol;
+                cout << "Enter stock symbol (or part of it) to search: ";
+                cin >> symbol;
+                list<Stock> matchingStocks = returnMatchingStocks(stocks, symbol);
+                if (matchingStocks.empty()) {
+                    cout << "No matching stocks found." << endl;
+                } else {
+                    for (const auto &stock : matchingStocks) {
+                        displayStock(stock);
+                    }
+                }
+                break;
+            }
+            case '7':
+                displayInDescOrder(stocks);
+                break;
+            case '8':
+                cout << "Exiting application." << endl;
+                break;
+            default:
+                cout << "Invalid option, please try again." << endl;
         }
-    } else {
-        cout << "No matching stocks found" << endl;
-    }
+    }while (!exit);
 
-    displayInDescOrder(stocks);
+
+    // display(stocks);
+    // const int companyNameIndex = returnElementIndex(stocks, "Katz");
+    // cout << "Company Name: " << companyNameIndex << endl;
+    // unordered_map<string, int> statistics = stockVolumeStatistics(stocks);
+    // for (auto &[first, second] : statistics) {
+    //     cout << first << " | " << second << endl;
+    // }
+    //
+    // cout << "Enter the price: " << endl;
+    // double price;
+    // cin >> price;
+    // displaySubset(stocks, price);
+    // minMaxAvg min_max_avg = minMaxAverage(stocks);
+    // displayMinMaxAvg(min_max_avg);
+    //
+    // cout << "Input capital letters next line to find the stocks with matching stock symbols: " << endl;
+    // string stock_symbol_input;
+    // cin >> stock_symbol_input;
+    // list<Stock> matching_stocks = returnMatchingStocks(stocks, stock_symbol_input);
+    // displayTitle();
+    // if (!matching_stocks.empty()) {
+    //     for (Stock& stock : matching_stocks) {
+    //         displayStock(stock);
+    //     }
+    // } else {
+    //     cout << "No matching stocks found" << endl;
+    // }
+    //
+    // displayInDescOrder(stocks);
 
 }
 int main() {
