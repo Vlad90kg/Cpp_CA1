@@ -50,7 +50,17 @@ void loadCSVData(const string &filename, vector<Stock> &stocks) {
     }
     fin.close();
 }
+int returnElementIndex(vector<Stock> &stocks, const string &company_name) {
+    int index = 0;
 
+    for (auto stock : stocks) {
+        if (stock.company_name == company_name) {
+            return index;
+        }
+        index++;
+    }
+    return -1;
+}
 void display(vector<Stock> &stocks) {
 
     cout << left << setw(15) << "Stock Symbol |"
@@ -70,10 +80,9 @@ void display(vector<Stock> &stocks) {
 void general() {
     vector<Stock> stocks;
     loadCSVData("../stock_market_data.csv", stocks);
-
-
     display(stocks);
-
+    int companyNameIndex = returnElementIndex(stocks, "Katz");
+    cout << "Company Name: " << companyNameIndex << endl;
 
 
 }
