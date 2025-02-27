@@ -2,12 +2,12 @@
 #include <fstream>
 #include <iomanip>
 #include <limits>
+#include <list>
 #include <sstream>
 #include <unordered_map>
 
 #include "../headers/DataModel.h"
 
-void display(vector<Stock> &stocks);
 
 void loadCSVData(const string &filename, vector<Stock> &stocks) {
     ifstream fin(filename);
@@ -170,7 +170,15 @@ void displayMinMaxAvg(const minMaxAvg &min_max_avg) {
     displayStock(min_max_avg.max);
     cout << "Average: " << min_max_avg.average << endl;
 }
-
+list<Stock> returnMatchingStocks(const vector<Stock> &stocks, const string &stock_symbol_input) {
+    list<Stock> matching_stocks;
+    for (auto it = stocks.begin(); it != stocks.end(); ++it) {
+        if ((it ->stock_symbol).find(stock_symbol_input) != string::npos) {
+            matching_stocks.push_back(*it);
+        }
+    }
+    return matching_stocks;
+}
 void general() {
     vector<Stock> stocks;
     loadCSVData("../stock_market_data.csv", stocks);
@@ -188,6 +196,20 @@ void general() {
     displaySubset(stocks, price);
     minMaxAvg min_max_avg = minMaxAverage(stocks);
     displayMinMaxAvg(min_max_avg);
+
+    cout << "Input capital letters next line to find the stocks with matching stock symbols: " << endl;
+    string stock_symbol_input;
+    cin >> stock_symbol_input;
+    list<Stock> matching_stocks = returnMatchingStocks(stocks, stock_symbol_input);
+    displayTitle();
+    if (!matching_stocks.empty()) {
+        for (Stock& stock : matching_stocks) {
+            displayStock(stock);
+        }
+    } else {
+        cout << "No matching stocks found" << endl;
+    }
+
 }
 int main() {
     general();
