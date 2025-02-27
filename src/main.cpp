@@ -9,7 +9,7 @@
 
 #include "../headers/DataModel.h"
 
-
+// loading data
 void loadCSVData(const string &filename, vector<Stock> &stocks) {
     ifstream fin(filename);
     if (fin) {
@@ -53,6 +53,61 @@ void loadCSVData(const string &filename, vector<Stock> &stocks) {
     }
     fin.close();
 }
+
+//displaying data functions
+void displaySubset(const vector<Stock> &stocks, const double &desired_price) {
+    bool found = false;
+    vector<Stock> subset;
+    for (const auto& stock : stocks) {
+        if (stock.price <= desired_price) {
+            found = true;
+            subset.push_back(stock);
+        }
+    }
+    if (found) {
+        cout << "Stocks with price equal to desired or less are below:" << endl;
+        display(subset);
+    }
+}
+
+void displayStock(const Stock &stock) {
+    cout << left << setw(15) << stock.stock_symbol
+         << left << setw(15) << stock.company_name
+         << right << setw(11) << stock.price
+         << right << setw(17) << stock.dividend_yield
+         << right << setw(17) << stock.volume_traded << endl;
+
+}
+
+void displayTitle() {
+    cout << left << setw(15) << "Stock Symbol |"
+         << left << setw(15) << "Company Name |"
+         << right << setw(13) << "Stock price | "
+         << right << setw(15) << "Dividend yield |"
+         << right << setw(15) << "Volume traded" << endl;
+}
+void display(vector<Stock> &stocks) {
+    displayTitle();
+    for (const Stock& stock : stocks) {
+        displayStock(stock);
+    }
+}
+
+void displayMinMaxAvg(const minMaxAvg &min_max_avg) {
+    displayTitle();
+    cout << "The least traded stock:" << endl;
+    displayStock(min_max_avg.min);
+    cout << "The most traded stock:" << endl;
+    displayStock(min_max_avg.max);
+    cout << "Average: " << min_max_avg.average << endl;
+}
+
+void displayInDescOrder(vector<Stock> stocks) {
+    ranges::sort(stocks, [](const Stock &stock1, const Stock &stock2) {return stock1.price > stock2.price;});
+    display(stocks);
+}
+
+// retuning data functions
 int returnElementIndex(const vector<Stock> &stocks, const string &company_name) {
     int index = 0;
 
@@ -100,45 +155,6 @@ unordered_map<string, int> stockVolumeStatistics(const vector<Stock> &stocks) {
     return statistics;
 }
 
-void displaySubset(const vector<Stock> &stocks, const double &desired_price) {
-    bool found = false;
-    vector<Stock> subset;
-    for (const auto& stock : stocks) {
-        if (stock.price <= desired_price) {
-            found = true;
-            subset.push_back(stock);
-        }
-    }
-    if (found) {
-        cout << "Stocks with price equal to desired or less are below:" << endl;
-        display(subset);
-    }
-}
-
-void displayStock(const Stock &stock) {
-    cout << left << setw(15) << stock.stock_symbol
-         << left << setw(15) << stock.company_name
-         << right << setw(11) << stock.price
-         << right << setw(17) << stock.dividend_yield
-         << right << setw(17) << stock.volume_traded << endl;
-
-}
-
-void displayTitle() {
-    cout << left << setw(15) << "Stock Symbol |"
-         << left << setw(15) << "Company Name |"
-         << right << setw(13) << "Stock price | "
-         << right << setw(15) << "Dividend yield |"
-         << right << setw(15) << "Volume traded" << endl;
-}
-void display(vector<Stock> &stocks) {
-    displayTitle();
-    for (const Stock& stock : stocks) {
-        displayStock(stock);
-    }
-}
-
-
 minMaxAvg minMaxAverage(const vector<Stock> &stocks) {
     int min = numeric_limits<int>::max(), max = numeric_limits<int>::min(),  avg = 0;
     Stock minStock, maxStock;
@@ -163,14 +179,7 @@ minMaxAvg minMaxAverage(const vector<Stock> &stocks) {
     return  min_max_avg;
 };
 
-void displayMinMaxAvg(const minMaxAvg &min_max_avg) {
-    displayTitle();
-    cout << "The least traded stock:" << endl;
-    displayStock(min_max_avg.min);
-    cout << "The most traded stock:" << endl;
-    displayStock(min_max_avg.max);
-    cout << "Average: " << min_max_avg.average << endl;
-}
+
 list<Stock> returnMatchingStocks(const vector<Stock> &stocks, const string &stock_symbol_input) {
     list<Stock> matching_stocks;
     for (auto it = stocks.begin(); it != stocks.end(); ++it) {
@@ -180,10 +189,7 @@ list<Stock> returnMatchingStocks(const vector<Stock> &stocks, const string &stoc
     }
     return matching_stocks;
 }
-void displayInDescOrder(vector<Stock> stocks) {
-    ranges::sort(stocks, [](const Stock &stock1, const Stock &stock2) {return stock1.price > stock2.price;});
-    display(stocks);
-}
+
 void general() {
     vector<Stock> stocks;
     loadCSVData("../stock_market_data.csv", stocks);
