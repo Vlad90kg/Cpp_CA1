@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <iostream>
 #include <fstream>
 #include <iomanip>
@@ -179,6 +180,10 @@ list<Stock> returnMatchingStocks(const vector<Stock> &stocks, const string &stoc
     }
     return matching_stocks;
 }
+void displayInDescOrder(vector<Stock> stocks) {
+    ranges::sort(stocks, [](const Stock &stock1, const Stock &stock2) {return stock1.price > stock2.price;});
+    display(stocks);
+}
 void general() {
     vector<Stock> stocks;
     loadCSVData("../stock_market_data.csv", stocks);
@@ -209,6 +214,8 @@ void general() {
     } else {
         cout << "No matching stocks found" << endl;
     }
+
+    displayInDescOrder(stocks);
 
 }
 int main() {
