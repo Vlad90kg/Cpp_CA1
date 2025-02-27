@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <iomanip>
 #include <sstream>
 
 #include "../headers/DataModel.h"
@@ -50,19 +51,31 @@ void loadCSVData(const string &filename, vector<Stock> &stocks) {
     fin.close();
 }
 
+void display(vector<Stock> &stocks) {
+
+    cout << left << setw(15) << "Stock Symbol |"
+         << left << setw(15) << "Company Name |"
+         << right << setw(13) << "Stock price | "
+         << right << setw(15) << "Dividend yield |"
+         << right << setw(15) << "Volume traded" << endl;
+    for (Stock stock : stocks) {
+         cout << left << setw(15) << stock.stock_symbol
+         << left << setw(15) << stock.company_name
+         << right << setw(11) << stock.price
+         << right << setw(17) << stock.dividend_yield
+         << right << setw(17) << stock.volume_traded << endl;
+    }
+}
+
 void general() {
     vector<Stock> stocks;
     loadCSVData("../stock_market_data.csv", stocks);
 
-    cout << "Stock Symbol | Company Name | Stock price | Dividend yield | Volume traded" << endl;
 
-    for (Stock stock : stocks) {
-        cout << stock.stock_symbol << " ";
-        cout << stock.company_name << " ";
-        cout << stock.price << " ";
-        cout << stock.dividend_yield << " ";
-        cout << stock.volume_traded << endl;
-    }
+    display(stocks);
+
+
+
 }
 int main() {
     general();
