@@ -191,6 +191,7 @@ list<Stock> returnMatchingStocks(const vector<Stock> &stocks, const string &stoc
 }
 
 void general() {
+    cout << fixed << setprecision(2);
     vector<Stock> stocks;
     loadCSVData("../stock_market_data.csv", stocks);
     bool exit = false;
@@ -280,6 +281,7 @@ void general() {
                 break;
             case '8':
                 cout << "Exiting application." << endl;
+                exit = true;
                 break;
             default:
                 cout << "Invalid option, please try again." << endl;
